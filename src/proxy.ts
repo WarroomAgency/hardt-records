@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { COOKIE_NAME } from "@/lib/supabase/cookie";
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -8,6 +9,7 @@ export async function proxy(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      cookieOptions: { name: COOKIE_NAME },
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (cookiesToSet) => {
@@ -38,6 +40,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|fonts/|api/run|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff2|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|fonts/|supabase/|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff2|ico)$).*)",
   ],
 };

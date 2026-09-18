@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, createRealtimeClient } from "@/lib/supabase/client";
 import { Chip, PageHeader, PdfLink, Stat } from "@/components/ui";
 import { cleanAddress, fmtDateTime, fmtTime, outcomeChip, shortCounty } from "@/lib/format";
 
@@ -19,26 +19,47 @@ export function LiveRun({ run: initialRun, initialEvents }: { run: RunRow; initi
   const seen = useRef(new Set(initialEvents.map((e) => e.id)));
   const live = !TERMINAL.has(run.status);
 
+  const addEvents = (incoming: LiveEvent[]) => {
+    const fresh = incoming.filter((e) => !seen.current.has(e.id));
+    if (!fresh.length) return;
+    fresh.forEach((e) => seen.current.add(e.id));
+    setEvents((prev) => [...prev, ...fresh].sort((a, b) => a.id - b.id));
+  };
+
   // realtime: new events for this run (unique topic + cancel guard survives StrictMode double-mount)
   useEffect(() => {
-    const supabase = createClient();
+    const auth = createClient();
+    const rt = createRealtimeClient();
     let cancelled = false;
     let channel: RealtimeChannel | null = null;
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    auth.auth.getSession().then(({ data: { session } }) => {
       if (cancelled) return;
-      if (session) supabase.realtime.setAuth(session.access_token);
-      channel = supabase
+      if (session) rt.realtime.setAuth(session.access_token);
+      channel = rt
         .channel(`run-${run.id}-${Math.random().toString(36).slice(2)}`)
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "events", filter: `run_id=eq.${run.id}` }, (payload) => {
-          const e = payload.new as LiveEvent;
-          if (seen.current.has(e.id)) return;
-          seen.current.add(e.id);
-          setEvents((prev) => [...prev, e]);
+          addEvents([payload.new as LiveEvent]);
         })
         .subscribe();
     });
-    return () => { cancelled = true; if (channel) supabase.removeChannel(channel); };
+    return () => { cancelled = true; if (channel) rt.removeChannel(channel); };
   }, [run.id]);
+
+  // polling fallback (same-origin): covers browsers that block the Realtime socket
+  useEffect(() => {
+    if (!live) return;
+    let stop = false;
+    const tick = async () => {
+      const last = Math.max(0, ...Array.from(seen.current));
+      try {
+        const r = await fetch(`/api/run-events?run_id=${run.id}&after=${last}`, { cache: "no-store" });
+        const j = await r.json();
+        if (!stop && Array.isArray(j?.events)) addEvents(j.events as LiveEvent[]);
+      } catch { /* keep polling */ }
+    };
+    const t = setInterval(tick, 6000);
+    return () => { stop = true; clearInterval(t); };
+  }, [live, run.id]);
 
   // clock starts after mount
   useEffect(() => {
