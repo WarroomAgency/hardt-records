@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* HARDT brand faces, self-hosted (same three files as the marketing site). */
+@font-face{font-family:'Red Hat Display';font-style:normal;font-weight:800 900;font-display:swap;src:url('/fonts/red-hat-display-800-normal.woff2') format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/dm-sans-400-normal.woff2') format('woff2')}
+@font-face{font-family:'Source Serif 4';font-style:italic;font-weight:500;font-display:swap;src:url('/fonts/source-serif-4-500-italic.woff2') format('woff2')}
+
+@theme {
+  --color-charcoal: #1A1A1A;
+  --color-cream: #F0EBE4;
+  --color-bronze: #8B7355;        /* hairline + focus rings only */
+  --color-bronze-ink: #7D674C;    /* small bronze text on cream */
+  --color-bronze-light: #9B815F;  /* small bronze text on charcoal */
+  --color-gray: #666666;
+  --color-white: #FFFFFF;
+  --color-alert: #A93226;
+  --color-alert-soft: #F6E3E0;
+  --color-ok: #2F6B3A;
+  --color-ok-soft: #E3EEE5;
+  --color-info-soft: #E6E1D9;
+
+  --font-display: 'Red Hat Display', system-ui, -apple-system, sans-serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  --radius-brand: 3px;
+}
+
+:root {
+  --line: rgba(26, 26, 26, 0.12);
+  --line-dark: rgba(240, 235, 228, 0.16);
+}
+
+html { color-scheme: light; }
+
+body {
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  line-height: 1.1;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  color: var(--color-bronze-ink);
+}
+.eyebrow-on-dark { color: var(--color-bronze-light); }
+
+/* The one serif line per page. Never headlines, never bold. */
+.serif-line {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--color-gray);
+}
+
+.hairline { border-color: var(--line); }
+.hairline-dark { border-color: var(--line-dark); }
+
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-brand);
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+:focus-visible {
+  outline: 2px solid var(--color-bronze);
+  outline-offset: 2px;
+}
+
+input, select, button { font: inherit; }
+
+.input {
+  width: 100%;
+  background: var(--color-white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-brand);
+  padding: 0.6rem 0.75rem;
+  color: var(--color-charcoal);
+}
+.input:focus { outline: 2px solid var(--color-bronze); outline-offset: 1px; border-color: transparent; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  font-family: var(--font-display); font-weight: 800; font-size: 13px; letter-spacing: .02em;
+  padding: .65rem 1rem; border-radius: var(--radius-brand); border: 1px solid transparent;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  cursor: pointer;
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--color-charcoal); color: var(--color-cream); }
+.btn-primary:hover:not(:disabled) { background: #000; }
+.btn-ghost { background: transparent; color: var(--color-charcoal); border-color: var(--line); }
+.btn-ghost:hover:not(:disabled) { background: var(--color-white); border-color: var(--color-charcoal); }
+.btn-danger { background: transparent; color: var(--color-alert); border-color: var(--line); }
+.btn-danger:hover:not(:disabled) { border-color: var(--color-alert); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-family: var(--font-display); font-weight: 800; font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  padding: .25rem .5rem; border-radius: var(--radius-brand); white-space: nowrap;
+}
+.chip-new      { background: var(--color-info-soft); color: var(--color-charcoal); }
+.chip-joined   { background: var(--color-ok-soft);   color: var(--color-ok); }
+.chip-cancel   { background: var(--color-charcoal);  color: var(--color-cream); }
+.chip-review   { background: var(--color-alert);     color: var(--color-white); }
+.chip-skipped  { background: transparent; color: var(--color-gray); border: 1px solid var(--line); }
+.chip-received { background: transparent; color: var(--color-gray); border: 1px solid var(--line); }
+.chip-cv       { background: var(--color-info-soft); color: var(--color-bronze-ink); }
+
+table.data { width: 100%; border-collapse: collapse; }
+table.data th {
+  text-align: left; font-family: var(--font-display); font-weight: 800; font-size: 11px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--color-gray);
+  padding: .6rem .75rem; border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+table.data td { padding: .6rem .75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.data tr:last-child td { border-bottom: 0; }
+table.data td.prop, table.data th.prop { min-width: 220px; }
+table.data tbody tr:hover td { background: rgba(240, 235, 228, .55); }
+
+a.link { color: var(--color-charcoal); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--color-bronze); }
+a.link:hover { text-decoration-color: var(--color-charcoal); }
