@@ -1,6 +1,15 @@
 [build]
   command = "npm run build"
 
+# Same-origin proxy for browser → Supabase auth/REST traffic, so ad/privacy blockers that
+# refuse *.supabase.co cannot break sign-in. Handled at Netlify's edge (force = true runs
+# it ahead of the Next.js function). The Next rewrite in next.config.ts covers local dev.
+[[redirects]]
+  from = "/supabase/*"
+  to = "https://ygcdduigwmejozdggdao.supabase.co/:splat"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
