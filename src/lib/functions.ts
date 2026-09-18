@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/env";
 
 /** Call a Supabase Edge Function as the signed-in user (server-side; forwards the session token). */
 export async function callFunction(name: string, body: unknown = {}) {
@@ -6,12 +7,12 @@ export async function callFunction(name: string, body: unknown = {}) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return { status: 401, json: { ok: false, message: "Not signed in." } as Record<string, unknown> };
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/${name}`, {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session.access_token}`,
-        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        apikey: SUPABASE_ANON_KEY,
       },
       body: JSON.stringify(body ?? {}),
       cache: "no-store",
