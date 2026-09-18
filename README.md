@@ -50,7 +50,7 @@ Queue counts on the console come from Make webhook scenario 6326460 (counts PDFs
 
 Make's API is behind Cloudflare and rejects non-browser user agents with `403 error code: 1010`; the shared `makeApi()` helper in the edge functions sends a Chrome user agent for that reason. Keep it if you ever rewrite the helper.
 
-Edge function sources are deployed from Supabase; local copies live outside this repo (see the project memory) — redeploy via the Supabase MCP or CLI if they need changes.
+Edge function sources are versioned under `supabase/functions/` (`_shared.ts` is bundled alongside each function's `index.ts` at deploy time); the schema and the migrations applied since are in `supabase/schema.sql` and `supabase/migrations.sql`. Redeploy a function via the Supabase CLI or MCP after editing it.
 
 ## Deploy (Netlify)
 
