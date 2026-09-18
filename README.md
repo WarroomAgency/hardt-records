@@ -57,8 +57,8 @@ Edge function sources are deployed from Supabase; local copies live outside this
 1. Create a GitHub repo (WarroomAgency org) and push `main`.
 2. Netlify → Add new site → import the repo. Build command `npm run build` (Next.js runtime is auto-detected).
 3. Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-4. Custom domain: the agreed subdomain (e.g. `hardt.warroomagency.com`) → CNAME to the Netlify site.
-5. Supabase → Authentication → URL Configuration: set **Site URL** to the live domain and add it to **Redirect URLs**.
+4. Custom domain: `hardtautomation.warroomagency.com` → add a CNAME for `hardtautomation` pointing at the Netlify site name (`<site>.netlify.app`) in the warroomagency.com DNS (NS1 / GoHighLevel panel), then let Netlify issue the certificate.
+5. Optional hygiene (password sign-in does not redirect): Supabase → Authentication → URL Configuration → Site URL `https://hardtautomation.warroomagency.com`.
 6. Sign in with an allowlisted email, then add Peter's team on **Team access**.
 
 ## Operational notes
